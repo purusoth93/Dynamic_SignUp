@@ -24,3 +24,11 @@ class patient(models.Model):
     city=models.CharField(max_length=15)
     state=models.CharField(max_length=15)
     pincode=models.IntegerField()
+    
+class blogs(models.Model):
+    title=models.CharField(max_length=25)
+    img=models.ImageField(upload_to='blog_img')
+    category=models.CharField(max_length=30)
+    summary=models.TextField(null=True,blank=True)
+    content=models.TextField(blank=True,null=True)
+    draft=models.BooleanField(default=False)

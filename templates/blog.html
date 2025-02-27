@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Blog Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+        }
+        .header-container h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        /* Add Blog Button */
+        .add-blog {
+            background-color: #ffcc00;
+            color: black;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .add-blog:hover {
+            background-color: #ffb700;
+        }
+
+        /* Blog Sections */
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #007bff;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        /* Blog Grid (2 Columns per Row) */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Exactly 2 columns */
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        /* Blog Card */
+        .blog-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Fixed Size Image */
+        .blog-card img {
+            width: 100%;
+            height: 250px; /* Fixed height */
+            object-fit: cover; /* Ensures image fills the container without distortion */
+        }
+
+        /* Blog Content */
+        .blog-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .blog-content h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #007bff;
+        }
+        .category {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+        .summary {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #444;
+        }
+        .content {
+            font-size: 14px;
+            color: #555;
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .blog-grid {
+                grid-template-columns: 1fr; /* Single column on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <h1 class="h3">📝 Blog List</h1>
+            {% if name == "doctor" %}
+            <a href="blog_form" class="add-blog">➕ Add Blog</a>
+            {% endif %}
+        </div>
+
+        <h1>🧠 Mental Health</h1>
+        <div class="blog-grid">
+            {% for blog in blogs %}
+            {% if blog.category == "Mental Health" %}
+            <div class="blog-card">
+                <img src="{{ blog.img.url }}" alt="{{ blog.title }}">
+                <div class="blog-content">
+                    <h2>{{ blog.title }}</h2>
+                    <span class="category">📌 {{ blog.category }}</span>
+                    <p class="summary">{{ blog.summary }}</p>
+                    <p class="content">{{ blog.content }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <h1>🦠 Covid19</h1>
+        <div class="blog-grid">
+            {% for blog in blogs %}
+            {% if blog.category == "Covid19" %}
+            <div class="blog-card">
+                <img src="{{ blog.img.url }}" alt="{{ blog.title }}">
+                <div class="blog-content">
+                    <h2>{{ blog.title }}</h2>
+                    <span class="category">📌 {{ blog.category }}</span>
+                    <p class="summary">{{ blog.summary }}</p>
+                    <p class="content">{{ blog.content }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <h1>❤️ Heart Disease</h1>
+        <div class="blog-grid">
+            {% for blog in blogs %}
+            {% if blog.category == "Heart Disease" %}
+            <div class="blog-card">
+                <img src="{{ blog.img.url }}" alt="{{ blog.title }}">
+                <div class="blog-content">
+                    <h2>{{ blog.title }}</h2>
+                    <span class="category">📌 {{ blog.category }}</span>
+                    <p class="summary">{{ blog.summary }}</p>
+                    <p class="content">{{ blog.content }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <h1>💉 Immunization</h1>
+        <div class="blog-grid">
+            {% for blog in blogs %}
+            {% if blog.category == "Immunization" %}
+            <div class="blog-card">
+                <img src="{{ blog.img.url }}" alt="{{ blog.title }}">
+                <div class="blog-content">
+                    <h2>{{ blog.title }}</h2>
+                    <span class="category">📌 {{ blog.category }}</span>
+                    <p class="summary">{{ blog.summary }}</p>
+                    <p class="content">{{ blog.content }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        
+        {% if name == "doctor" %}
+        <h1>Drafted Blogs</h1>
+        <div class="blog-grid">
+            {% for draft in drafts %}
+            <div class="blog-card">
+                <img src="{{ draft.img.url }}" alt="{{ draft.title }}">
+                <div class="blog-content">
+                    <h2>{{ draft.title }}</h2>
+                    <span class="category">📌 {{ draft.category }}</span>
+                    <p class="summary">{{ draft.summary }}</p>
+                    <p class="content">{{ draft.content }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-from .models import doctor, patient
+from .models import doctor, patient,blogs
 from django.contrib.auth.hashers import check_password
 
 def doc_sign(request):
@@ -109,7 +109,9 @@ def doc_login(request):
             if check_password(password, user.password):
                 request.session['doctor_id'] = user.id
                 request.session['doctor_name'] = user.username  # Store doctor's name in session
-                return render(request,'details.html',{'obj':user,'name':'doctor'}) 
+                bl=blogs.objects.filter(draft=False).all()
+                b2=blogs.objects.filter(draft=True).all()
+                return render(request,'blog.html',{'obj':user,'name':'doctor','blogs':bl,'drafts':b2}) 
             else:
                 messages.info(request, 'Invalid credentials')
                 return render(request, 'login.html', {'name': 'doctor'})
@@ -133,7 +135,8 @@ def pat_login(request):
             if check_password(password, user.password):
                 request.session['patient_id'] = user.id
                 request.session['patient_name'] = user.username  # Store doctor's name in session
-                return render(request,'details.html',{'obj':user,'name':'patient'}) 
+                bl=blogs.objects.filter(draft=False).all()
+                return render(request,'blog.html',{'obj':user,'name':'patient','blogs':bl}) 
             else:
                 messages.info(request, 'Invalid credentials')
                 return render(request, 'login.html', {'name': 'patient'})
@@ -142,3 +145,20 @@ def pat_login(request):
             return render(request, 'login.html', {'name': 'patient'})
     
     return render(request, 'login.html', {'name': 'patient'})
+
+def blog_list(request):
+    if request.method=="POST":
+        title=request.POST['title']
+        img=request.FILES.get('image')
+        category=request.POST['category']
+        summary=request.POST['summary']
+        words=summary.split()
+        summary=' '.join(words[:15])+('...' if len(words)>15 else '')
+        content=request.POST['content']
+        draft=request.POST.get('draft', 'off') == 'on'
+        blog=blogs(title=title,img=img,category=category,summary=summary,content=content,draft=draft)
+        blog.save()
+        messages.info(request, 'blog created successsfully!')
+        return redirect('blog_form')
+    else:
+        return render(request,'blog_form.html')

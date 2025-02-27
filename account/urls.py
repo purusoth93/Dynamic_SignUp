@@ -5,4 +5,5 @@ urlpatterns = [
     path('patient',views.pat_sign,name='patient'),
     path('doc_login',views.doc_login,name='doc_login'),
     path('pat_login',views.pat_login,name='pat_login'),
+    path('blog_form',views.blog_list,name='blog_form')
 ]

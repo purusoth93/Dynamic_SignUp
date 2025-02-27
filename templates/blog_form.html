@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Blog Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #f4f7fc;
+        }
+
+        .container {
+            max-width: 900px; /* Increased width */
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-container h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Form Styling */
+        .blog-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
+
+        select.form-control {
+            appearance: none;
+            background: white;
+            cursor: pointer;
+        }
+
+        textarea.form-control {
+            resize: none;
+        }
+
+        /* Error Messages */
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* Checkbox Styling */
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Submit Button */
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: linear-gradient(to right, #007bff, #00d4ff);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #0056b3, #009dff);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .container {
+                max-width: 700px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                padding: 15px;
+            }
+
+            .blog-form {
+                padding: 20px;
+            }
+
+            .form-control {
+                width: 100%;
+            }
+
+            .btn-primary {
+                width: 100%;
+            }
+
+            .header-container h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <h1>📝 Create A New Blog</h1>
+        </div>
+        
+        <div class="blog-form">
+            <form method="POST" action="blog_form" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Error Messages -->
+                <div class="error">
+                    {% for message in messages %}
+                        <p class="error">⚠️ {{ message }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Title -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" id="title" name="title" class="form-control" required>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload Image</label>
+                    <input type="file" id="image" name="image" class="form-control" required>
+                </div>
+
+                <!-- Category Selection -->
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="Mental Health">Mental Health</option>
+                        <option value="Heart Disease">Heart Disease</option>
+                        <option value="Covid19">Covid-19</option>
+                        <option value="Immunization">Immunization</option>
+                    </select>
+                </div>
+
+                <!-- Summary -->
+                <div class="mb-3">
+                    <label for="summary" class="form-label">Summary</label>
+                    <textarea id="summary" name="summary" class="form-control" rows="2" required></textarea>
+                </div>
+
+                <!-- Content -->
+                <div class="mb-3">
+                    <label for="content" class="form-label">Content</label>
+                    <textarea id="content" name="content" class="form-control" rows="5" required></textarea>
+                </div>
+
+                <!-- Draft Checkbox -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" id="draft" name="draft" class="form-check-input">
+                    <label for="draft" class="form-check-label">Save as Draft</label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">🚀 Publish Blog</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
