@@ -26,7 +26,7 @@ class patient(models.Model):
     pincode=models.IntegerField()
     
 class blogs(models.Model):
-    title=models.CharField(max_length=25)
+    title=models.CharField(max_length=100)
     img=models.ImageField(upload_to='blog_img')
     category=models.CharField(max_length=30)
     summary=models.TextField(null=True,blank=True)
