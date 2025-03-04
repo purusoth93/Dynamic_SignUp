@@ -131,6 +131,68 @@
                 grid-template-columns: 1fr; /* Single column on small screens */
             }
         }
+        /* Container for the appointment section */
+        .appointment-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        /* Individual doctor card (Increased size and adjusted for 2 per row) */
+        .doctor-card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 45%;  /* Adjusted to fit 2 per row */
+            min-width: 350px; /* Prevents very small cards on small screens */
+        }
+        
+        /* Doctor's profile picture */
+        .doctor-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 12px;
+        }
+        
+        /* Doctor's name */
+        .doctor-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 10px; /* Adjusts spacing between name and button */
+        }
+        
+        /* Book Appointment Button */
+        .appointment-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            transition: background 0.3s;
+            font-size: 1rem;
+        }
+        
+        .appointment-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Make sure only 2 cards appear per row on larger screens */
+        @media (max-width: 800px) {
+            .doctor-card {
+                width: 80%; /* Stacks one per row on smaller screens */
+            }
+        }
+        
+        
+
     </style>
 </head>
 <body>
@@ -139,7 +201,10 @@
             <h1 class="h3">📝 Blog List</h1>
             {% if name == "doctor" %}
             <a href="blog_form" class="add-blog">➕ Add Blog</a>
+            {% else %}
+            <a href="#appoint" class="add-blog">Book</a>
             {% endif %}
+
         </div>
 
         <h1>🧠 Mental Health</h1>
@@ -227,7 +292,42 @@
         </div>
         {% endif %}
 
+        {% if name == 'patient' %}
+                <h1 id="appoint">💉 BOOK APPOINTMENTS</h1>
+                <div class="appointment-container">
+                    {% for doc in doctors %}
+                    <div class="doctor-card">
+                        <img src="{{ doc.profile_pic.url }}" alt="{{ doc.username }}">
+                        <div class="doctor-info">
+                            <h2 class="doctor-name">Dr. {{ doc.first_name }}</h2>
+                            <a href="{% url 'book' doc.id %}" class="appointment-btn">BOOK APPOINTMENT</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+        {% endif %}
+
+
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+        
+                    const target = document.querySelector(this.getAttribute("href"));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                    }
+                });
+            });
+        });
+        
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

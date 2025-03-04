@@ -1,8 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
-from .models import doctor, patient,blogs
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import make_password, check_password
+from .models import doctor, patient, blogs, booking
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+import datetime
+
+# Google Calendar API Setup
+SCOPES = ['https://www.googleapis.com/auth/calendar']
+SERVICE_ACCOUNT_FILE = 'service-account.json'  # Ensure this file is in the project root
+CALENDAR_ID = 'dd31f36e3b86035cce4d29041198fe71e814095c42863c876ca43cf3b500ed84@group.calendar.google.com'  # Replace with your Calendar ID
 
 def doc_sign(request):
     if request.method == 'POST':
@@ -136,7 +143,8 @@ def pat_login(request):
                 request.session['patient_id'] = user.id
                 request.session['patient_name'] = user.username  # Store doctor's name in session
                 bl=blogs.objects.filter(draft=False).all()
-                return render(request,'blog.html',{'obj':user,'name':'patient','blogs':bl}) 
+                d1=doctor.objects.all()
+                return render(request,'blog.html',{'obj':user,'name':'patient','blogs':bl,'doctors':d1}) 
             else:
                 messages.info(request, 'Invalid credentials')
                 return render(request, 'login.html', {'name': 'patient'})
@@ -162,3 +170,79 @@ def blog_list(request):
         return redirect('blog_form')
     else:
         return render(request,'blog_form.html')
+    
+def create_calendar_event(doc_name, pat_name, date, start_time, end_time, spec):
+    """Create an event in Google Calendar."""
+    creds = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    service = build('calendar', 'v3', credentials=creds)
+
+    event = {
+        'summary': f'Appointment with Dr. {doc_name}',
+        'description': f'Patient: {pat_name}\nSpecialization: {spec}',
+        'start': {
+            'dateTime': f'{date}T{start_time}',
+            'timeZone': 'Asia/Kolkata',
+        },
+        'end': {
+            'dateTime': f'{date}T{end_time}',
+            'timeZone': 'Asia/Kolkata',
+        },
+    }
+
+    try:
+        event_response = service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
+        print(f"DEBUG: Event created successfully: {event_response}")
+    except Exception as e:
+        print(f"ERROR: Failed to create event - {e}")
+
+def book(request, id):
+    """Handle booking of an appointment."""
+    if request.method == "POST":
+        doc_name = request.POST['doctor']
+        pat_name = request.POST['patient']
+        spec = request.POST['specialist']
+        date = request.POST['date']
+        start_time = request.POST['time'].strip()  
+
+        try:
+            # Convert start_time (12-hour format with AM/PM) to 24-hour format
+            start_time_obj = datetime.datetime.strptime(start_time, "%I:%M %p")
+            end_time_obj = start_time_obj + datetime.timedelta(minutes=45)
+
+            # Format to Google Calendar's required format (HH:MM:SS)
+            start_time_formatted = start_time_obj.strftime("%H:%M:%S")
+            end_time_formatted = end_time_obj.strftime("%H:%M:%S")
+
+            # Save appointment in database
+            appoint = booking(
+                doc_name=doc_name,
+                pat_name=pat_name,
+                spec=spec,
+                book_date=date,
+                start_time=start_time_formatted,
+                end_time=end_time_formatted
+            )
+            appoint.save()
+
+            # Add to Google Calendar
+            create_calendar_event(doc_name, pat_name, date, start_time_formatted, end_time_formatted, spec)
+
+            messages.success(request, 'Appointment booked and added to Google Calendar!')
+            return render(request, 'book_success.html', {
+                'doc_name': doc_name,
+                'pat_name': pat_name,
+                'spec': spec,
+                'date': date,
+                'start_time': start_time_formatted,
+                'end_time': end_time_formatted
+            })
+
+        except ValueError as e:
+            messages.error(request, f"Invalid time format: {e}")
+            print(f"ERROR: {e}")  # Debugging
+            return redirect('book', id=id)
+
+    else:
+        doc = get_object_or_404(doctor, id=id)
+        return render(request, 'book.html', {'doc': doc})

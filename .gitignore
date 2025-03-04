@@ -2,3 +2,4 @@ media/
 static/
 __pycache__/
 db.sqlite3
+service-account.json

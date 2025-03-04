@@ -12,6 +12,7 @@ class doctor(models.Model):
     city=models.CharField(max_length=15)
     state=models.CharField(max_length=15)
     pincode=models.IntegerField()
+    spec=models.CharField(max_length=15,blank=True,null=True)
 
 class patient(models.Model):
     first_name=models.CharField(max_length=20)
@@ -32,3 +33,11 @@ class blogs(models.Model):
     summary=models.TextField(null=True,blank=True)
     content=models.TextField(blank=True,null=True)
     draft=models.BooleanField(default=False)
+
+class booking(models.Model):
+    doc_name=models.CharField(max_length=30)
+    pat_name=models.CharField(max_length=30)
+    spec=models.CharField(max_length=30)
+    book_date=models.CharField(max_length=20)
+    start_time=models.CharField(max_length=10)
+    end_time=models.CharField(max_length=10)
